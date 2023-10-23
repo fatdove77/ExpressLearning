@@ -91,3 +91,22 @@ app.listen(port,()=>{
   ```
 
   
+
+```js
+//__dirname是本地根文件  fs读取的文件需要转换成json格式 不然是二进制
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/data/tours.json`));
+console.log(tours);
+
+app.get("/api/v1/tours",(req,res)=>{
+  res.status(200).json({
+    status:"success",
+    total:tours.length,  //用户让用户知道数组的长度 方便
+    data:{
+      tours:tours
+    }
+  })
+
+})
+
+```
+
