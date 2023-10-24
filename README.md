@@ -244,3 +244,129 @@ app.route("/api/v1/tours").get(getAllTours).post(createTour);
 npm i morgan
 ```
 
+```js
+app.use(morgan('dev')) 
+
+
+//after requesting output :GET /api/v1/tours 200 23.548 ms - 275
+```
+
+
+
+
+
+## express.Router()整理route(mounting)
+
+```js
+const tourRouter = express.Router();  //新建Router对象
+//声明中间件
+app.use("/api/v1/tours",tourRouter)  //整合路径一致的所有路由
+tourRouter.route("/").get(getAllTours).post(createTour);  //这里route的/就是/api/v1/tours
+tourRouter.route("/:id").get(getTour) 
+```
+
+
+
+
+
+## file structure
+
+app.js用来存放middleware
+
+```js
+const express = require('express');
+const fs = require('fs');
+const morgan = require('morgan');
+const tourRouter = require('./routes//tourRoutes')
+const userRouter = require('./routes//userRoutes')
+const app = express(); //创建对象 express app下可以调用express的方法
+
+///////////middleware
+//middleware is a function which is to modify request data
+app.use(morgan('dev'))
+app.use(express.json());
+app.use((req,res,next)=>{
+  console.log("this is middleware");
+  next();
+})
+
+app.use((req,res,next)=>{
+  req.requestTime = new Date().toISOString();
+  next();
+})
+
+
+
+
+//////////route
+app.use("/api/v1/tours",tourRouter)
+app.use("/api/v1/tours",userRouter)
+
+/////////start the server
+//方便监听
+const port = 3000;
+app.listen(port, () => {
+  console.log(`app running on port ${port}...`);
+})
+```
+
+
+
+routes/tourRoutes
+
+```js
+const express = require('express');
+const tourController = require("../controllers/tourController.js")
+const router = express.Router();
+
+
+
+
+router
+  .route("/")
+  .get(tourController.getAllTours)
+  .post(tourController.createTour);
+
+
+module.exports = router;
+```
+
+
+
+
+
+controllers/tourControllers
+
+```js
+const fs = require('fs');
+
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/../data/tours.json`));
+
+exports.getAllTours = (req, res) => {
+  console.log(req.requestTime);
+  res.status(200).json({
+    status: "success",
+    total: tours.length,  //用户让用户知道数组的长度 方便
+    data: {
+      tours: tours
+    }
+  })
+}
+
+exports.createTour = (req, res) => {
+  const newId = tours[tours.length - 1].id + 1;
+  const newTour = Object.assign({ id: newId }, req.body);
+  tours.push(newTour);
+  fs.writeFile(`${__dirname}/data/tours.json`, JSON.stringify(tours), (err) => {
+    //201 means created
+    res.status(201).json({
+      status: "success",
+      data: {
+        tours: newTour
+      }
+    })
+  })
+}
+
+```
+
