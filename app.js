@@ -7,12 +7,12 @@ const app = express(); //创建对象 express app下可以调用express的方法
 
 ///////////middleware
 //middleware is a function which is to modify request data
-app.use(morgan('dev'))
+console.log(process.env.NODE_ENV );
+if(process.env.NODE_ENV === 'production'){
+  app.use(morgan('dev'))
+}
 app.use(express.json());
-app.use((req,res,next)=>{
-  console.log("this is middleware");
-  next();
-})
+app.use(express.static(`${__dirname}/public`));
 
 app.use((req,res,next)=>{
   req.requestTime = new Date().toISOString();

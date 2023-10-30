@@ -302,7 +302,7 @@ app.use((req,res,next)=>{
 app.use("/api/v1/tours",tourRouter)
 app.use("/api/v1/tours",userRouter)
 
-module.ex
+module.exports = app;
 ```
 
 
@@ -377,5 +377,157 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`app running on port ${port}...`);
 })
+```
+
+
+
+
+
+发送http请求，中间件（app.js）,路由参数中间件（router），路由返回
+
+
+
+## params middleware
+
+一般定义在指定的route文件中，val就是路由参数中id的值
+
+```js
+router.param("id",(req,res,next,val)=>{
+  console.log("tour id is ",val);
+  next()
+})
+
+```
+
+用法：
+
+```js
+
+//检查参数
+exports.checkId = (req,res,next,value)=>{
+  if(value>10){
+    return res.status(404).json({
+      status:"fail",
+      message:"invalid id"
+    })
+  }
+  next();  //可加可不加 因为在参数中间件中已经返回
+}
+
+
+router.param("id",tourController.checkId)
+
+
+```
+
+post请求，路由中不带参数，我们需要检查res.body的参数，那么我们需要如下这么写中间件
+
+```js
+router
+  .route("/")
+  .get(tourController.getAllTours)
+ .post(middleware,tourController.createTour)
+```
+
+```js
+qie
+//检查创建的参数正确性 req.body
+exports.bodyCheck = (req, res, next) => {
+  console.log("检查body");
+  if (!req.body.name) {
+    return res.status(400).json({
+      status: "fail",
+      message: "missing name"
+    })
+  }
+  next();
+}
+```
+
+
+
+
+
+# static file
+
+定义根节点
+
+```js
+app.use(express.static(`${__dirname}/public`));
+```
+
+这样我们直接在网站输入：
+
+```js
+http://127.0.0.1:3000/test.html
+```
+
+就能打开网页，不需要输入/public...
+
+
+
+
+
+# environment variables
+
+开发环境和测试环境的切换，需要用到环境变量
+
+```js
+console.log(app.get("env"))   //development
+```
+
+## 设置环境变量
+
+```shell
+npm i dotenv
+```
+
+config.env:
+
+```js
+NODE_ENV=development
+PORT=8000
+USER=FATDOVE
+PASSWORD=12345
+```
+
+server.js：  读取config.env文件然后赋值给环境变量
+
+```js
+const dotenv = require('dotenv');
+dotenv.config({
+  path:"./config.env"
+})
+
+
+console.log(app.get("env")); //打印出我们设置的环境变量
+```
+
+测试的时候，指定测试环境的中间件：
+
+```js
+if(process.env.NODE_ENV === 'production'){
+  app.use(morgan('dev'))
+}
+```
+
+```js
+const port = process.env.port||3000;  //process.env.port存在就返回，不然返回3000
+```
+
+
+
+package定义 通过这种方式启动两种不同的开发环境，但是config.env也会起作用
+
+```js
+"scripts": {
+    "start:dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+```
+
+```js
+ npm run start:dev
 ```
 
