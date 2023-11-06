@@ -590,3 +590,13 @@ db.tours.replaceOne  //替换
  db.tours.deleteMany({})  //delete all
 ```
 
+
+
+## atlas
+
+关闭防火墙
+
+mongod.exe
+
+复制connect string
+
