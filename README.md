@@ -531,3 +531,62 @@ package定义 通过这种方式启动两种不同的开发环境，但是config
  npm run start:dev
 ```
 
+
+
+
+
+# MongoDB
+
+基本shell指令
+
+https://dotblogs.com.tw/grayyin/2020/06/01/133724
+
+```
+mongo 启动数据库
+use dbname 切换到对应数据库 
+db.tours.insertOne([bson])  给collection添加一个元素，这里直接就相当于创建了集合
+db.tours.find()  查看集合下面的所有文件
+```
+
+
+
+### 查
+
+```js
+db.tours.find({name:"zjx"})  //查找包含name=zjx
+db.tours.find()  //get all
+db.tours.find({age:{$lt:50}})   //小于50  lte小于等于 gt大于
+db.tours.find({$or:[{age:{lt:50}},{name:"zjx"}]})  //或
+db.tours.find({$or:[{age:{lt:50}},{price:{$lt:500}}]，{name:"zjx"}})  //内部只写范围  外部限定name  
+```
+
+
+
+### 增
+
+```sql
+db.tours.insertOne({name:"zjx"})
+
+db.tours.insertMany([{name:"zjx"},{name:"fatdove"}])
+```
+
+
+
+### 改
+
+```js
+db.tours.updateOne({name :"fatdove"},{$set:{age:22} }) 先查找出来，再进行修改$set
+
+
+db.tours.replaceOne  //替换
+```
+
+
+
+### 删
+
+```
+ db.tours.deleteMany({age:{$gte:23}})
+ db.tours.deleteMany({})  //delete all
+```
+
