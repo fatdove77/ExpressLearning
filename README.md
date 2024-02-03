@@ -600,3 +600,86 @@ mongod.exe
 
 复制connect string
 
+cluster0.drvhgpe.mongodb.net
+
+
+
+
+
+# what is mongoose
+
+## schema
+
+https://blog.csdn.net/qappleh/article/details/95097931
+
+在 Mongoose 中，所有数据都由一个 Schema 开始创建。每一个 schema 都映射到一个 [Mongodb](https://so.csdn.net/so/search?q=Mongodb&spm=1001.2101.3001.7020) 的集合(collection)，并定义了该集合(collection)中的文档(document)的形式。
+
+![image-20240203194330281](README.assets/image-20240203194330281.png)
+
+
+
+# mvc
+
+![image-20240203203156953](README.assets/image-20240203203156953.png)
+
+![image-20240203203819113](README.assets/image-20240203203819113.png)
+
+# express 连接mongo
+
+[切记运动mongod.exe]
+
+config.env粘贴connection string
+
+```
+DATABASE=mongodb+srv://fatdove:zjx412523@cluster0.drvhgpe.mongodb.net/fatdove[数据库名]
+
+
+//TOTAL
+NODE_ENV=development
+PORT=8900
+DATABASE=mongodb+srv://fatdove:zjx412523@cluster0.drvhgpe.mongodb.net/fatdove?retryWrite=true
+//DATABASE_LOCAL=mongodb://localhost:27017/fatdove\
+DATABASE_PASSWORD=zjx412523
+```
+
+下载mongodb连接器（driver）
+
+```
+ npm i mongoose@5
+```
+
+server.js
+
+```js
+/////////start the server
+const mongoose = require('mongoose')
+const dotenv = require('dotenv');
+dotenv.config({
+  path: "./config.env"
+})
+
+//env要在app前读取 不然app.js中无法使用环境变量
+const app = require('./app.js')
+
+//mongodb
+const DB = process.env.DATABASE.replace('<password>',process.env.DATABASE_PASSWORD)
+//connect to mongo
+mongoose.connect(DB,{
+  useNewUrlParser:true,
+  useCreateIndex:true,
+  useFindAndModify:false,
+  useUnifiedTopology: true
+}).then(con=>{
+  // console.log("DB connection successful!");
+}).catch(err=>{
+  console.log(err);
+})
+
+//方便监听
+const port = process.env.port || 3000;
+app.listen(port, () => {
+  console.log(`app running on port ${port}...`);
+})
+
+```
+
