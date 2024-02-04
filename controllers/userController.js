@@ -14,12 +14,43 @@ const User = require("../models/userModel")
 // }
 
 
-exports.getAllUsers = (req, res) => {
-  console.log(req.requestTime);
-  res.status(200).json({
-    status: "success",
-  })
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users
+      }
+    })
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error
+    })
+  }
 }
+
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json({
+      status: "success",
+      message: "get by id",
+      data: {
+        user
+      }
+    })
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error
+    })
+
+  }
+}
+
 
 exports.createUser = async (req, res) => {
   try {
@@ -37,7 +68,7 @@ exports.createUser = async (req, res) => {
     })
   } catch (error) {
     res.status(400).json({
-      status:"fail",
+      status: "fail",
       message: "Invalid data sent"
     })
   }
@@ -45,13 +76,6 @@ exports.createUser = async (req, res) => {
 
 }
 
-exports.getUserById = (req, res) => {
-  console.log(req.params);
-  res.status(200).json({
-    status: "success",
-    message: "get by id"
-  })
 
-}
 
 

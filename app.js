@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const morgan = require('morgan');
-const tourRouter = require('./routes//tourRoutes')
 const userRouter = require('./routes//userRoutes')
 const app = express(); //创建对象 express app下可以调用express的方法
 
@@ -20,10 +19,7 @@ app.use((req, res, next) => {
 })
 
 
-
-
 //////////route
-app.use("/api/v1/tours", tourRouter)
 app.use("/api/v1/users", userRouter)
 
 module.exports = app
