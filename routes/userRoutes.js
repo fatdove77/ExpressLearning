@@ -11,10 +11,11 @@ router
   .post(userController.createUser);
 
 
-  router
+router
   .route("/:id")
   .get(userController.getUserById)
-  .post();
+  .post()
+  .patch(userController.updateUser);
 
 
 

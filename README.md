@@ -608,6 +608,8 @@ cluster0.drvhgpe.mongodb.net
 
 # what is mongoose
 
+https://mongoosejs.com/docs/queries.html
+
 ## schema
 
 https://blog.csdn.net/qappleh/article/details/95097931

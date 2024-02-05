@@ -47,7 +47,27 @@ exports.getUserById = async (req, res) => {
       status: "fail",
       message: error
     })
+  }
+}
 
+exports.updateUser = async(req, res) => {
+  try {
+    console.log(req.params.id,req.body);
+    const user = await User.findByIdAndUpdate(req.params.id,req.body,{
+      new:true,  //返回一个新的document
+      runValidators:true  //验证数据类型
+    })
+    res.status(200).json({
+      status: "success",
+      data: {
+        user
+      }
+    })
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error
+    })
   }
 }
 
