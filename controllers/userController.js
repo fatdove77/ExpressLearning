@@ -52,7 +52,6 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUser = async(req, res) => {
   try {
-    console.log(req.params.id,req.body);
     const user = await User.findByIdAndUpdate(req.params.id,req.body,{
       new:true,  //返回一个新的document
       runValidators:true  //验证数据类型
@@ -92,10 +91,22 @@ exports.createUser = async (req, res) => {
       message: "Invalid data sent"
     })
   }
-
-
 }
 
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id)
+    res.status(204).json({
+      status: "success",
+      message:"delete successfully!"
+    })
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error
+    })
+  }
+}
 
 
 
